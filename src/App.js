@@ -7,6 +7,8 @@ import Register from './components/Register/Register';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
+import Modal from './components/Modal/Modal'
+import Profile from './components/Profile/Profile'
 import './App.css';
 
 const particlesOptions = {
@@ -26,7 +28,8 @@ const initialState = {
   imageUrl: '',
   boxes: [],
   route: 'signin',
-  isSignedIn: false,
+  isSignedIn: true,
+  isProfileOpen: false,
   user: {
     id: '',
     name: '',
@@ -51,7 +54,12 @@ class App extends Component {
       joined: data.joined
     }})
   }
-
+  toggleModal = ()=> {
+    this.setState((prevState)=>({
+      ...prevState,
+      isProfileOpen: !prevState.isProfileOpen
+    }))
+  }
   calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0]
       .data.regions
@@ -112,7 +120,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState(initialState)
+      return this.setState(initialState)
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
     }
@@ -126,7 +134,15 @@ class App extends Component {
          <Particles className='particles'
           params={particlesOptions}
         />
-        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+        <Navigation   toggleModal={this.toggleModal} isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+        {
+          this.state.isProfileOpen &&
+            <Modal>
+              <Profile 
+                toggleModal={this.toggleModal}
+                isProfileOpen={this.state.isProfileOpen}/>
+            </Modal>
+        }
         { route === 'home'
           ? <div>
               <Logo />
