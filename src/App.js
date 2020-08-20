@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Particles from 'react-particles-js';
+import moment from 'moment'
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
 import Signin from './components/Signin/Signin';
@@ -9,6 +11,7 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Modal from './components/Modal/Modal'
 import Profile from './components/Profile/Profile'
+import 'react-notifications/lib/notifications.css';
 import './App.css';
 
 const particlesOptions = {
@@ -28,14 +31,16 @@ const initialState = {
   imageUrl: '',
   boxes: [],
   route: 'signin',
-  isSignedIn: true,
+  isSignedIn: false,
   isProfileOpen: false,
   user: {
     id: '',
     name: '',
     email: '',
     entries: 0,
-    joined: ''
+    joined: '',
+    age:'',
+    pet:'',
   }
 }
 
@@ -44,14 +49,64 @@ class App extends Component {
     super();
     this.state = initialState;
   }
-
+  componentDidMount = () => {
+    const token = window.sessionStorage.getItem('token')
+    if (token) {
+      fetch('http://localhost:3000/signin', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        }
+      })
+      .then(res => res.json())
+      .then( data => {  
+        if (data && data.id ){
+         fetch(`http://localhost:3000/profile/${data.id}`, {
+          method: 'get',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          }
+         })
+          .then(res =>  res.json())
+          .then(user => {
+            if(user && user.email){
+              this.loadUser(user)
+              this.onRouteChange('home')
+            }
+          })
+        } 
+      }).catch(error =>  console.log(error))
+    }
+  }
+  createNotification = (type, message) => {
+      switch (type) {
+        case 'info':
+          NotificationManager.info('Info message');
+          break;
+        case 'success':
+          NotificationManager.success(type);
+          break;
+        case 'warning':
+          NotificationManager.warning(message, 'Close after 3000ms', 3000);
+          break;
+        case 'error':
+          NotificationManager.error(message,type, 5000, () => {
+            alert('callback');
+          });
+          break;
+      }
+  };
   loadUser = (data) => {
     this.setState({user: {
       id: data.id,
       name: data.name,
       email: data.email,
       entries: data.entries,
-      joined: data.joined
+      joined: moment(new Date(data.joined)).format('LL'),
+      age: data.age,
+      pet: data.pet,
     }})
   }
   toggleModal = ()=> {
@@ -60,22 +115,21 @@ class App extends Component {
       isProfileOpen: !prevState.isProfileOpen
     }))
   }
+
   calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0]
-      .data.regions
-      .map(regions => regions.region_info.bounding_box);
-
-    const image = document.getElementById('inputimage');
-    const width = Number(image.width);
-    const height = Number(image.height);
-    return clarifaiFace.map(box => {
-      return {
-        leftCol: box.left_col * width,
-        topRow: box.top_row * height,
-        rightCol: width - (box.right_col * width),
-        bottomRow: height - (box.bottom_row * height)
-      }
-    })
+      .data.regions.map(regions => regions.region_info.bounding_box);
+        const image = document.getElementById('inputimage');
+        const width = Number(image.width);
+        const height = Number(image.height);
+        return clarifaiFace.map(box => {
+          return {
+            leftCol: box.left_col * width,
+            topRow: box.top_row * height,
+            rightCol: width - (box.right_col * width),
+            bottomRow: height - (box.bottom_row * height)
+          }
+      })
   }
 
   displayFaceBox = (boxes) => {
@@ -87,11 +141,15 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
+    const token = window.sessionStorage.getItem('token')
     this.setState({boxes:[]})
     this.setState({imageUrl: this.state.input});
       fetch('http://localhost:3000/imageurl', {
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
         body: JSON.stringify({
           input: this.state.input
         })
@@ -101,7 +159,10 @@ class App extends Component {
         if (response) {
           fetch('http://localhost:3000/image', {
             method: 'put',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token
+            },
             body: JSON.stringify({
               id: this.state.user.id
             })
@@ -128,7 +189,7 @@ class App extends Component {
   }
 
   render() {
-    const { isSignedIn, imageUrl, route, boxes } = this.state;
+    const { isSignedIn, imageUrl, route, boxes, user} = this.state;
     return (
       <div className="App">
          <Particles className='particles'
@@ -139,8 +200,12 @@ class App extends Component {
           this.state.isProfileOpen &&
             <Modal>
               <Profile 
+                createNotification={this.createNotification}
+                loadUser={this.loadUser}
                 toggleModal={this.toggleModal}
-                isProfileOpen={this.state.isProfileOpen}/>
+                isProfileOpen={this.state.isProfileOpen}
+                user={user}
+                />
             </Modal>
         }
         { route === 'home'
@@ -162,6 +227,7 @@ class App extends Component {
              : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
             )
         }
+        <NotificationContainer/>
       </div>
     );
   }
