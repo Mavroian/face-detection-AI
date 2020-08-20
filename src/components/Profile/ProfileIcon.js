@@ -9,7 +9,25 @@ import {
 const ProfileIcon = ({ onRouteChange, toggleModal }) => {
   const [ dropdownOpen, setDropdownOpen ] = useState(false);
   const toggle = () => setDropdownOpen(prevState => !prevState);
-
+  const onsignOut = () => {
+    const token = window.sessionStorage.getItem('token')
+    if (token) {
+      fetch('http://localhost:3000/signout', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        }
+      })
+      .then(res => res.json())
+      .then( () => {  
+        window.sessionStorage.removeItem('token')
+        onRouteChange('signout')
+      }).catch(error =>  console.log(error))
+    }else {
+      onRouteChange('signin')
+    }
+}
   return (
     <div className="pa4 tc" >
       <Dropdown direction="left" isOpen={dropdownOpen} toggle={toggle}>
@@ -29,7 +47,7 @@ const ProfileIcon = ({ onRouteChange, toggleModal }) => {
               left:'-190px'
           }}>
           <DropdownItem onClick={toggleModal}>View Profile</DropdownItem>
-          <DropdownItem onClick={() => onRouteChange('signout')}>Sign Out</DropdownItem>
+          <DropdownItem onClick={onsignOut}>Sign Out</DropdownItem>
         </DropdownMenu>
       </Dropdown>
       
