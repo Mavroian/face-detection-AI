@@ -1,4 +1,6 @@
-import React, { useState }from 'react';
+import React, { useState } from 'react';
+import { signOutApiCall } from '../../lib/api/api'
+
 import {
   Dropdown,
   DropdownToggle,
@@ -10,24 +12,8 @@ const ProfileIcon = ({ onRouteChange, toggleModal }) => {
   const [ dropdownOpen, setDropdownOpen ] = useState(false);
   const toggle = () => setDropdownOpen(prevState => !prevState);
   const onsignOut = () => {
-    const token = window.sessionStorage.getItem('token')
-    if (token) {
-      fetch('http://localhost:3000/signout', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        }
-      })
-      .then(res => res.json())
-      .then( () => {  
-        window.sessionStorage.removeItem('token')
-        onRouteChange('signout')
-      }).catch(error =>  console.log(error))
-    }else {
-      onRouteChange('signin')
-    }
-}
+    signOutApiCall(onRouteChange)
+  }
   return (
     <div className="pa4 tc" >
       <Dropdown direction="left" isOpen={dropdownOpen} toggle={toggle}>

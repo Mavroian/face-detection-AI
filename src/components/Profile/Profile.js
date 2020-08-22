@@ -1,10 +1,13 @@
-import React, { useState, useEffect} from 'react'
+import React, { useState } from 'react'
+import { updateProfileApi } from '../../lib/api/api'
+
 import './Profile.css'
-const Profile = ({isProfileOpen, createNotification,toggleModal, user, loadUser}) => {
+const Profile = ({ createNotification,toggleModal, user, loadUser }) => {
+
 const [ name, setName ] = useState(user.name)
 const [ age, setAge ] = useState(user.age)
 const [ pet, setPet ] = useState(user.pet)
-const [notification, setNotification] = useState(false)
+
 
 
 const onFormChange = (event) => {
@@ -22,27 +25,16 @@ const onFormChange = (event) => {
       break;
   }
 } 
-const sendFormData = (id) => {
-  const data = { name, age, pet}
-  const token = window.sessionStorage.getItem('token')
-    fetch(`http://localhost:3000/profile/${id}`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token
-      },
-      body: JSON.stringify({formInput: data})
-    })
-      .then(response => {
-        toggleModal()
-        loadUser({...user, ...data})
-        return response.json()
-      })
-      .then(res => {
-        createNotification(res, res)
-      }).catch(error=> {
-        createNotification(error)
-      })
+const sendFormData = ( id ) => {
+  const data = { name, age, pet }
+  updateProfileApi(
+    id,
+    data,
+    loadUser,
+    toggleModal,
+    createNotification,
+    user
+  )
 }
 return(
   <div className='profile-modal'>

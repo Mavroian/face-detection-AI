@@ -16,13 +16,20 @@ import './App.css';
 
 const particlesOptions = {
   particles: {
-    number: {
-      value: 30,
-      density: {
-        enable: true,
-        value_area: 800
+    "number": {
+      "value": 80
+  },
+  "size": {
+      "value": 3
+  },
+    interactivity: {
+      events: {
+          onhover: {
+              enable: true,
+              mode: "repulse"
+          }
       }
-    }
+  }
   }
 }
 
@@ -95,6 +102,8 @@ class App extends Component {
           NotificationManager.error(message,type, 5000, () => {
             alert('callback');
           });
+          break;
+        default:
           break;
       }
   };
@@ -193,7 +202,24 @@ class App extends Component {
     return (
       <div className="App">
          <Particles className='particles'
-          params={particlesOptions}
+           params={{
+	    "particles": {
+	        "number": {
+	            "value": 80
+	        },
+	        "size": {
+	            "value": 3
+	        }
+	    },
+	    "interactivity": {
+	        "events": {
+	            "onhover": {
+	                "enable": true,
+	                "mode": "repulse"
+	            }
+	        }
+	    }
+	}}
         />
         <Navigation   toggleModal={this.toggleModal} isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         {
