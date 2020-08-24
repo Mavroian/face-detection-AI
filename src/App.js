@@ -203,23 +203,23 @@ class App extends Component {
       <div className="App">
          <Particles className='particles'
            params={{
-	    "particles": {
-	        "number": {
-	            "value": 80
-	        },
-	        "size": {
-	            "value": 3
-	        }
-	    },
-	    "interactivity": {
-	        "events": {
-	            "onhover": {
-	                "enable": true,
-	                "mode": "repulse"
-	            }
-	        }
-	    }
-	}}
+            "particles": {
+                "number": {
+                    "value": 80
+                },
+                "size": {
+                    "value": 3
+                }
+            },
+            "interactivity": {
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    }
+                }
+            }
+          }}
         />
         <Navigation   toggleModal={this.toggleModal} isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         {
