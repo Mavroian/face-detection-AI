@@ -13,4 +13,4 @@ workflows:
   version:2.1
   drone:
     jobs:
-      s- build
+      - build
