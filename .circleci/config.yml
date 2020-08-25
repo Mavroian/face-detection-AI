@@ -9,7 +9,7 @@ jobs:
       - run: yarn
       - run: yarn build
 workflows:
-  version:2.1
+  version: 2.1
   drone:
     jobs:
       - build
