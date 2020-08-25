@@ -15,21 +15,21 @@ import 'react-notifications/lib/notifications.css';
 import './App.css';
 
 const particlesOptions = {
-  particles: {
-    "number": {
-      "value": 80
+  "particles": {
+      "number": {
+          "value": 80
+      },
+      "size": {
+          "value": 3
+      }
   },
-  "size": {
-      "value": 3
-  },
-    interactivity: {
-      events: {
-          onhover: {
-              enable: true,
-              mode: "repulse"
+  "interactivity": {
+      "events": {
+          "onhover": {
+              "enable": true,
+              "mode": "repulse"
           }
       }
-  }
   }
 }
 
@@ -202,24 +202,7 @@ class App extends Component {
     return (
       <div className="App">
          <Particles className='particles'
-           params={{
-            "particles": {
-                "number": {
-                    "value": 80
-                },
-                "size": {
-                    "value": 3
-                }
-            },
-            "interactivity": {
-                "events": {
-                    "onhover": {
-                        "enable": true,
-                        "mode": "repulse"
-                    }
-                }
-            }
-          }}
+           params={particlesOptions}
         />
         <Navigation   toggleModal={this.toggleModal} isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         {
