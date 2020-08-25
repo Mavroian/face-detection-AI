@@ -1,15 +1,23 @@
 version: 2.1
+
+# Define the jobs we want to run for this project
 jobs:
   build:
     docker:
-       -image: circleci/node:9.1
+      - image: circleci/9.1
     steps:
       - checkout
-      - run: echo "yarn installing"
-      - run: yarn
-      - run: yarn build
+      - run: echo "this is the build job"
+  test:
+    docker:
+      - image: circleci/9.1
+    steps:
+      - checkout
+      - run: echo "this is the test job"
+
+# Orchestrate our job run sequence
 workflows:
-  version: 2.1
-  drone:
+  build_and_test:
     jobs:
       - build
+      - test
