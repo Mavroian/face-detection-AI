@@ -8,8 +8,8 @@ jobs:
     steps:
       - checkout
       - run: echo "this is the build job"
-      - run: yarn
-      - run: yarn build
+      - run: npm install
+      - run: npm run build
   test:
     docker:
       - image: circleci/node:10
