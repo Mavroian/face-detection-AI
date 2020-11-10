@@ -11,6 +11,7 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Modal from './components/Modal/Modal'
 import Profile from './components/Profile/Profile'
+import Loading from './components/Loading/Loading'
 import { backend_API } from './lib/utils/constants';
 import 'react-notifications/lib/notifications.css';
 import './App.css';
@@ -22,6 +23,7 @@ const initialState = {
   route: 'signin',
   isSignedIn: false,
   isProfileOpen: false,
+  isLoading:false,
   user: {
     id: '',
     name: '',
@@ -41,6 +43,7 @@ class App extends Component {
   componentDidMount = () => {
     const token = window.sessionStorage.getItem('token')
     if (token) {
+     this.handleLoading(true)
       fetch(`${ backend_API }/signin`, {
         method: 'post',
         headers: {
@@ -63,6 +66,7 @@ class App extends Component {
             if(user && user.email){
               this.loadUser(user)
               this.onRouteChange('home')
+              this.handleLoading(false)
             }
           })
         } 
@@ -178,7 +182,9 @@ class App extends Component {
     }
     this.setState({route: route});
   }
-
+  handleLoading = (loading) => {
+    this.setState({ isLoading: loading })
+  }
   render() {
     const { isSignedIn, imageUrl, route, boxes, user} = this.state;
     return (
@@ -216,8 +222,9 @@ class App extends Component {
                 />
             </Modal>
         }
-        { route === 'home'
-          ? <div>
+        { route === 'home'? 
+            <div>
+             
               <Logo />
               <Rank
                 name={this.state.user.name}
@@ -230,9 +237,16 @@ class App extends Component {
                 <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
             </div>
           : (
-             route === 'signin'
-             ? <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
-             : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+             route === 'signin' ? 
+                ( 
+                  !this.state.isLoading ?
+                    <Signin handleLoading={this.handleLoading} loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+                    :
+                    <Loading/>
+                )
+                
+             :  
+                <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
             )
         }
         <NotificationContainer/>

@@ -22,6 +22,7 @@ class Signin extends React.Component {
   }
 
   onSubmitSignIn = () => {
+    this.props.handleLoading(true)
     fetch(`${ backend_API }/signin`, {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
@@ -32,7 +33,6 @@ class Signin extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         if (data.userId && data.success) {
           this.saveAuthTokenInSession(data.token)
           fetch(`${ backend_API }/profile/${data.userId}`, {
@@ -46,6 +46,7 @@ class Signin extends React.Component {
            .then(data => {
             this.props.loadUser(data)
             this.props.onRouteChange('home');
+            this.props.handleLoading(false)
            }).catch(error => console.log(error))
         }
       }).catch(error => console.log(error))
