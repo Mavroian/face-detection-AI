@@ -1,4 +1,5 @@
 import React from 'react';
+import { backend_API } from '../../lib/utils/constants';
 
 class Signin extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class Signin extends React.Component {
   }
 
   onSubmitSignIn = () => {
-    fetch('http://localhost:3000/signin', {
+    fetch(`${ backend_API }/signin`, {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -31,9 +32,10 @@ class Signin extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.userId && data.success === 'true') {
+        console.log(data)
+        if (data.userId && data.success) {
           this.saveAuthTokenInSession(data.token)
-          fetch(`http://localhost:3000/profile/${data.userId}`, {
+          fetch(`${ backend_API }/profile/${data.userId}`, {
             method: 'get',
             headers: {
               'Content-Type': 'application/json',

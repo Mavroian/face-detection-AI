@@ -1,8 +1,10 @@
 
+ import { backend_API } from '../utils/constants';
+
  export const signOutApiCall = (onRouteChange) => {
   const token = window.sessionStorage.getItem('token')
     if (token) {
-      fetch('http://localhost:3000/signout', {
+      fetch(`${backend_API}/signout`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +29,7 @@ export const updateProfileApi = (
   user
   ) => {
   const token = window.sessionStorage.getItem('token')
-  fetch(`http://localhost:3000/profile/${id}`, {
+  fetch(`${backend_API}/profile/${id}`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',

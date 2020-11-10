@@ -11,27 +11,9 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Modal from './components/Modal/Modal'
 import Profile from './components/Profile/Profile'
+import { backend_API } from './lib/utils/constants';
 import 'react-notifications/lib/notifications.css';
 import './App.css';
-
-const particlesOptions = {
-  particles: {
-    "number": {
-      "value": 80
-  },
-  "size": {
-      "value": 3
-  },
-    interactivity: {
-      events: {
-          onhover: {
-              enable: true,
-              mode: "repulse"
-          }
-      }
-  }
-  }
-}
 
 const initialState = {
   input: '',
@@ -59,7 +41,7 @@ class App extends Component {
   componentDidMount = () => {
     const token = window.sessionStorage.getItem('token')
     if (token) {
-      fetch('http://localhost:3000/signin', {
+      fetch(`${ backend_API }/signin`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +51,7 @@ class App extends Component {
       .then(res => res.json())
       .then( data => {  
         if (data && data.id ){
-         fetch(`http://localhost:3000/profile/${data.id}`, {
+         fetch(`${ backend_API }/profile/${data.id}`, {
           method: 'get',
           headers: {
             'Content-Type': 'application/json',
@@ -153,7 +135,7 @@ class App extends Component {
     const token = window.sessionStorage.getItem('token')
     this.setState({boxes:[]})
     this.setState({imageUrl: this.state.input});
-      fetch('http://localhost:3000/imageurl', {
+      fetch(`${ backend_API }/imageurl`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +148,7 @@ class App extends Component {
       .then(response => response.json())
       .then(response => {
         if (response) {
-          fetch('http://localhost:3000/image', {
+          fetch(`${ backend_API }/image`, {
             method: 'put',
             headers: {
               'Content-Type': 'application/json',

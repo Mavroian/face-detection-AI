@@ -1,0 +1,1 @@
+export const backend_API = 'https://tranquil-cove-73968.herokuapp.com';

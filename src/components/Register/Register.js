@@ -1,4 +1,5 @@
 import React from 'react';
+import { backend_API } from '../../lib/utils/constants';
 
 class Register extends React.Component {
   constructor(props) {
@@ -25,7 +26,7 @@ class Register extends React.Component {
     window.sessionStorage.setItem('token', token)
   }
   onSubmitSignIn = () => {
-    fetch('http://localhost:3000/register', {
+    fetch(`${ backend_API }/register`, {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -37,7 +38,7 @@ class Register extends React.Component {
       .then(response => response.json())
       .then(user => {
         if(user.id){
-            fetch('http://localhost:3000/signin', {
+            fetch(`${ backend_API }/signin`, {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -49,7 +50,7 @@ class Register extends React.Component {
           .then(data => {
             if (data.userId && data.success === 'true') {
               this.saveAuthTokenInSession(data.token)
-              fetch(`http://localhost:3000/profile/${data.userId}`, {
+              fetch(`${ backend_API }/profile/${data.userId}`, {
                 method: 'get',
                 headers: {
                   'Content-Type': 'application/json',
