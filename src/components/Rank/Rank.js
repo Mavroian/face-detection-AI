@@ -7,7 +7,6 @@ useEffect(()=> {
   fetch(`https://bk3a3pr8r1.execute-api.us-east-1.amazonaws.com/prod/rank?rank=${entries}`)
   .then(res => res.json())
   .then((res)=> {
-    console.log(res)
     setEmoji(res.input)
   })
 },[entries])
